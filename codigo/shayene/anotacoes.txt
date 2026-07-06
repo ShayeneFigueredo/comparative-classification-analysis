@@ -51,3 +51,38 @@ Separação necessária para o algoritmo saber o que é entrada e o que é saíd
 ---------------------------------------
 DIVIDINFO EM TREINO E TESTE
 
+70% treino e 30% teste
+
+- usei stratify=y pra que ele calcule as classes proporcionalmente a quantidade de elementos que cada um tem, para que a avaliação nao fique injusta
+
+ficou assim:
+Treino: (1209, 6) | Teste: (519, 6)
+
+----------------------------------------------
+TREINO DO PRIMEIRO ALGORITMO (usando gini)
+
+Acuracia: 0.9788053949903661
+
+de 519 carros no teste, o modelo acertou ~508. Só errou uns 11.
+
+mas usei **max_depth=None** que deixa a árvore crescer sem limite. Ela pode criar regras super específicas tipo:
+▎ "Se portas=3 E capacidade=4 E porta_malas=med E segurança=high → good"
+
+
+----------------------------------------------
+TREINO DO PRIMEIRO ALGORITMO (usando entropy)
+#no fim o gini e o entropy nao tem tanta diferença, geralmente usam resultados super parecidos... usando os 2 so pra testar
+
+Acuracia (com poda): 0.8497109826589595
+
+A árvore sem poda acertou quase tudo, mas ela pode ter criado regras super específicas que só funcionam nessa base (overfitting). Já a árvore podada (limitada a 5 níveis) errou mais, mas é mais simples e provavelmente generalizaria melhor pra carros novos.
+
+-------------------------------------------------------
+RESULTADO TREINO E TESTE
+Árvore de Decisão — Resultados parciais (só acurácia):
+   - Config 1 (Gini, sem poda): 97,88%
+   - Config 2 (Entropy, max_depth=5): 84,97%
+   → A poda reduziu a acurácia em ~13%, mas pode evitar overfitting.
+
+
+--------------------------------------------------------------
