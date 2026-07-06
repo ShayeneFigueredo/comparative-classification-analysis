@@ -1,0 +1,53 @@
+car.data nao tinha cabeçalho, por isso criei nomes para as colunas na mão.
+
+Data columns (total 7 columns):
+ #   Column        Non-Null Count  Dtype
+---  ------        --------------  -----
+ 0   p_compra      1728 non-null   str   
+ 1   p_manutencao  1728 non-null   str  
+ 2   portas        1728 non-null   str  
+ 3   capacidade    1728 non-null   str  
+ 4   porta_malas   1728 non-null   str  
+ 5   seguranca     1728 non-null   str  
+ 6   classe        1728 non-null   str  
+dtypes: str(7)
+memory usage: 94.6 KB
+
+**todos os atributos são categóricos**
+nao tem valores faltando.
+
+
+--------------------------------------
+#ver quantos carros sao unacc, acc, good e vgood
+print(df['classe'].value_counts())
+
+┌─────────────────────┬────────────┬───────┐
+│       Classe        │ Quantidade │   %   │
+├─────────────────────┼────────────┼───────┤
+│ unacc (inaceitável) │ 1210       │ ~70%  │
+├─────────────────────┼────────────┼───────┤
+│ acc (aceitável)     │ 384        │ ~22%  │
+├─────────────────────┼────────────┼───────┤
+│ good (bom)          │ 69         │ ~4%   │
+├─────────────────────┼────────────┼───────┤
+│ vgood (muito bom)   │ 65         │ ~3,7% │
+└─────────────────────┴────────────┴───────┘
+
+- A base é muito desbalanceada — 7 em cada 10 carros são "inaceitáveis"
+- good e vgood juntos somam só 134 carros (menos de 8%)
+- Isso é um desafio: o algoritmo pode "chutar" sempre unacc e acertar 70% das vezes sem aprender nada
+
+--------------------------------
+PRÉ-PROCESSAMENTO
+
+Escolha: Label Encoding em todas as colunas, pois os atributos são **ordinais**
+
+--------------------------------
+SEPARAÇÃO DE FEATURE E DA SCLASSES
+
+Features (X): 6 atributos do carro. Classe (y): aceitabilidade.
+Separação necessária para o algoritmo saber o que é entrada e o que é saída a ser prevista.
+
+---------------------------------------
+DIVIDINFO EM TREINO E TESTE
+

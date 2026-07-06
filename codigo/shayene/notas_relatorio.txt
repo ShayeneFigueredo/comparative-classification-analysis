@@ -1,0 +1,38 @@
+NOTAS PARA O RELATÓRIO — Shayene Lopes Figueredo
+=================================================
+Base: Car Evaluation (UCI, 1728 instâncias)
+
+1. Base Car Evaluation: 1728 instâncias, 7 colunas (6 atributos + 1 classe).
+   Atributos: preco_compra, preco_manutencao, portas, capacidade,
+   porta_malas, seguranca. Classe: aceitabilidade do carro.
+
+2. Todos os atributos são categóricos (qualitativos), tipo string/texto.
+   Nenhum atributo numérico contínuo.
+
+3. Não há valores ausentes — base está completa e não precisa de
+   tratamento de dados faltantes.
+
+4. A base é desbalanceada: unacc = 70% (1210), acc = 22% (384),
+   good = 4% (69), vgood = 3,7% (65).
+   Isso influencia as métricas — F1-score weighted é mais adequado
+   que acurácia pura nesse caso, pois penaliza o desbalanceamento.
+
+5. Escolha de codificação: Label Encoding em TODAS as colunas,
+   pois os atributos são ordinais (ex: low < med < high).
+   One-Hot Encoding seria adequado para atributos nominais puros
+   (ex: cores), que não é o caso aqui.
+
+6. LabelEncoder do scikit-learn: ordena alfabeticamente, não pela
+   ordem lógica dos valores. Para Árvore de Decisão, Random Forest
+   e CategoricalNB isso não afeta o resultado, pois eles tratam
+   os valores como categorias distintas, não como escala numérica.
+
+PENDÊNCIAS:
+- [ ] Separar X (features) e y (classe)
+- [ ] Dividir treino (70%) e teste (30%) com stratify=y, random_state=42
+- [ ] Rodar Árvore de Decisão (2 configs)
+- [ ] Rodar CategoricalNB (2 configs)
+- [ ] Rodar Random Forest (2 configs)
+- [ ] Calcular métricas (Acurácia, F1, Precision, Recall)
+- [ ] Gerar matrizes de confusão
+- [ ] Escrever parágrafo de análise
