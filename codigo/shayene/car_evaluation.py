@@ -15,7 +15,7 @@ import seaborn as sns
 #dei nome para as colunas pq o arquivo nao tem cabeçalho
 COLUNAS = ['p_compra', 'p_manutencao', 'portas', 'capacidade', 'porta_malas', 'seguranca', 'classe']
 
-df= pd.read_csv('base_dados/car+evaluation/car.data', names=COLUNAS)
+df = pd.read_csv('base_dados/car+evaluation/car.data', names=COLUNAS)
 
 #ver quantos carros sao unacc, acc, good e vgood
 # print(df['classe'].value_counts())
@@ -62,7 +62,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y
 )
 
-print('Treino:', X_train.shape, '| Teste:', X_test.shape)
+# print('Treino:', X_train.shape, '| Teste:', X_test.shape)
 
 
 #config 1: treino do primeiro alg
@@ -72,19 +72,73 @@ from sklearn.tree import DecisionTreeClassifier
 modelo = DecisionTreeClassifier(criterion='gini', max_depth=None, random_state=42)
 modelo.fit(X_train, y_train)
 
-# fazer previsoes no teste
 y_pred = modelo.predict(X_test)
 
-# medir acuracia
 from sklearn.metrics import accuracy_score
 acc = accuracy_score(y_test, y_pred)
-print('Acuracia:', acc)
-
-
+# print('Acuracia:', acc)
 
 #config 2: com poda (max_depth=5)
 modelo2 = DecisionTreeClassifier(criterion='entropy', max_depth=5, random_state=42)
 modelo2.fit(X_train, y_train)
+
 y_pred2 = modelo2.predict(X_test)
+
 acc2 = accuracy_score(y_test, y_pred2)
-print('Acuracia (com poda):', acc2)
+# print('Acuracia (com poda):', acc2)
+
+
+# calculando F1-Score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+# funcao que avalia o modelo e devolve todas as metricas
+def avaliar(modelo, X_test, y_test, nome, params):
+    y_pred = modelo.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    prec = precision_score(y_test, y_pred, average='weighted', zero_division=0)
+    rec = recall_score(y_test, y_pred, average='weighted', zero_division=0)
+    f1 = f1_score(y_test, y_pred, average='weighted', zero_division=0)
+
+    print(f'{nome} [{params}]')
+    print(f'  Acurácia:  {acc:.4f}')
+    print(f'  Precision: {prec:.4f}')
+    print(f'  Recall:    {rec:.4f}')
+    print(f'  F1-Score:  {f1:.4f}')
+    print()
+    return {'Algoritmo': nome, 'Params': params,
+            'Acurácia': acc, 'F1': f1, 'Precision': prec, 'Recall': rec}
+
+#avaliar os dois modelos que ja treinamos
+avaliar(modelo, X_test, y_test, 'Arvore de Decisao', 'Gini, sem poda')
+avaliar(modelo2, X_test, y_test, 'Árvore de Decisão', 'Entropy, max_depth=5')
+
+
+
+
+# calculando naive bayes
+from sklearn.naive_bayes import CategoricalNB
+
+# config 1: alpha 1.0 (padrao)
+nb1 = CategoricalNB(alpha=1.0)
+nb1.fit(X_train, y_train)
+avaliar(nb1, X_test, y_test, 'Naive Bayes', 'alpha=1.0')
+
+# conif 2: alpha = 0.5
+nb2 = CategoricalNB(alpha=0.5)
+nb2.fit(X_train, y_train)
+avaliar(nb2, X_test, y_test, 'Naive Bayes', 'alpha=0.5')
+
+
+
+# calculando random forest
+from sklearn.ensemble import RandomForestClassifier
+
+#config 1: 100 arvores sem poda
+rf1 = RandomForestClassifier(n_estimators=100, max_depth=None, random_state=42)
+rf1.fit(X_train, y_train)
+avaliar(rf1, X_test, y_test, 'Random Fprest', '100 arvores sem poda')
+
+# config 2: 200 arvores com poda
+rf2 = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42)
+rf2.fit(X_train, y_train)
+avaliar(rf2, X_test, y_test, 'Random Forest', '200 arvores com poda')

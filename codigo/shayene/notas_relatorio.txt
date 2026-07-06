@@ -27,12 +27,88 @@ Base: Car Evaluation (UCI, 1728 instâncias)
    e CategoricalNB isso não afeta o resultado, pois eles tratam
    os valores como categorias distintas, não como escala numérica.
 
+7. Features (X): 6 atributos do carro. Classe (y): aceitabilidade.
+   Separação necessária para o algoritmo saber o que é entrada e o
+   que é saída a ser prevista.
+
+8. Holdout 70/30 com estratificação (stratify=y): preserva a proporção
+   das classes no treino e no teste. Ex: unacc é 70% nos dois.
+   random_state=42 garante reprodutibilidade.
+
+9. Métricas: average='weighted' calcula precision, recall e F1
+   ponderando cada classe pelo seu número de instâncias. Assim,
+   unacc (70% dos dados) tem peso proporcional na média, e good
+   (4%) não distorce o resultado com uma amostra pequena.
+
+═══════════════════════════════════════════════════════════
+RESULTADOS FINAIS — CAR EVALUATION
+═══════════════════════════════════════════════════════════
+
+10. TABELA DE RESULTADOS:
+
+| Algoritmo          | Parametrização              | Acurácia | F1     | Precision | Recall |
+|-------------------|----------------------------|----------|--------|-----------|--------|
+| Árvore de Decisão | Gini, sem poda             | 0.9788   | 0.9790 | 0.9798    | 0.9788 |
+| Árvore de Decisão | Entropy, max_depth=5       | 0.8497   | 0.8341 | 0.8265    | 0.8497 |
+| Naive Bayes       | CategoricalNB, alpha=1.0   | 0.8574   | 0.8500 | 0.8524    | 0.8574 |
+| Naive Bayes       | CategoricalNB, alpha=0.5   | 0.8536   | 0.8467 | 0.8495    | 0.8536 |
+| Random Forest     | 100 árvores, sem poda      | 0.9653   | 0.9654 | 0.9656    | 0.9653 |
+| Random Forest     | 200 árvores, max_depth=10  | 0.9615   | 0.9613 | 0.9614    | 0.9615 |
+
+11. ANÁLISE — MELHOR ALGORITMO:
+
+    A Árvore de Decisão sem poda teve a maior acurácia (97,88%),
+    mas mostrou-se INSTÁVEL: com poda (max_depth=5) caiu para
+    84,97%, uma queda de quase 13 pontos percentuais. Isso indica
+    que o modelo sem poda pode estar sobreajustado (overfitting)
+    aos dados de treino.
+
+    A Random Forest (100 árvores, sem poda) obteve 96,53% de
+    acurácia e mostrou-se MUITO mais ROBUSTA:
+    - A diferença entre as duas configurações foi de apenas 0,38%
+    - As 4 métricas (acurácia, precisão, recall, F1) ficaram todas
+      em torno de 96,5%, indicando que o modelo trata todas as
+      classes de forma equilibrada.
+    - Mesmo sendo um algoritmo NÃO visto em sala, sua estabilidade
+      e alto desempenho o tornam a melhor escolha.
+
+12. EFEITO DA PARAMETRIZAÇÃO:
+
+    - Árvore de Decisão: a parametrização fez MUITA diferença.
+      A poda (max_depth=5) reduziu drasticamente o desempenho,
+      sugerindo que regras mais profundas são necessárias para
+      capturar os padrões dessa base.
+
+    - Naive Bayes: o alpha quase não afetou os resultados
+      (diferença de ~0,4% entre alpha=1.0 e alpha=0.5). O modelo
+      é pouco sensível a esse parâmetro nesta base.
+
+    - Random Forest: a parametrização fez POUCA diferença
+      (0,38%). O modelo é naturalmente robusto a variações
+      de parâmetros por causa do mecanismo de votação entre
+      múltiplas árvores.
+
+13. OBSERVAÇÕES:
+
+    - A base Car Evaluation é "fácil" para algoritmos baseados em
+      árvore porque os atributos são fortemente preditivos e há
+      poucas features (apenas 6).
+    - Naive Bayes teve desempenho inferior (~85%) provavelmente
+      porque sua premissa de independência entre features não se
+      sustenta bem aqui (ex: preço e manutenção são correlacionados).
+    - O desbalanceamento da base (unacc = 70%) não prejudicou os
+      algoritmos de árvore, que naturalmente lidam bem com classes
+      desbalanceadas.
+
+═══════════════════════════════════════════════════════════
 PENDÊNCIAS:
-- [ ] Separar X (features) e y (classe)
-- [ ] Dividir treino (70%) e teste (30%) com stratify=y, random_state=42
-- [ ] Rodar Árvore de Decisão (2 configs)
-- [ ] Rodar CategoricalNB (2 configs)
-- [ ] Rodar Random Forest (2 configs)
-- [ ] Calcular métricas (Acurácia, F1, Precision, Recall)
-- [ ] Gerar matrizes de confusão
-- [ ] Escrever parágrafo de análise
+═══════════════════════════════════════════════════════════
+- [x] Separar X (features) e y (classe)
+- [x] Dividir treino (70%) e teste (30%) com stratify=y, random_state=42
+- [x] Rodar Árvore de Decisão (2 configs)
+- [x] Rodar CategoricalNB (2 configs)
+- [x] Rodar Random Forest (2 configs)
+- [x] Calcular métricas (Acurácia, F1, Precision, Recall)
+- [ ] Gerar matrizes de confusão (6 matrizes)
+- [ ] Salvar tabela CSV de resultados
+- [ ] Escrever parágrafo de análise final

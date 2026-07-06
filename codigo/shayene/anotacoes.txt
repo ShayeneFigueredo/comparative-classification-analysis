@@ -86,3 +86,132 @@ RESULTADO TREINO E TESTE
 
 
 --------------------------------------------------------------
+CALCULANDO F1-Score
+
+como funciona:
+┌───────────┬───────────────────────────────────┬───────────────────────────┐
+│  Métrica  │       Pergunta que responde       │          Exemplo          │
+├───────────┼───────────────────────────────────┼───────────────────────────┤
+│ Acurácia  │ "Quantos acertei no total?"       │ 508/519                   │
+├───────────┼───────────────────────────────────┼───────────────────────────┤
+│ Precision │ "Dos que eu disse que são good,   │ Se eu gritei "good" 10    │
+│           │ quantos são good de verdade?"     │ vezes, acertei 8 → 80%    │
+├───────────┼───────────────────────────────────┼───────────────────────────┤
+│ Recall    │ "Dos good que existiam, quantos   │ Tinha 20 good no teste,   │
+│           │ eu encontrei?"                    │ achei 8 → 40%             │
+├───────────┼───────────────────────────────────┼───────────────────────────┤
+│ F1-Score  │ Média entre Precision e Recall    │ Equilibra os dois         │
+└───────────┴───────────────────────────────────┴───────────────────────────┘
+
+RESULTADOS:
+Arvore de Decisao [Gini, sem poda]
+  Acurácia:  0.9788
+  Precision: 0.9798
+  Recall:    0.9788
+  F1-Score:  0.9790
+
+Árvore de Decisão [Entropy, max_depth=5]
+  Acurácia:  0.8497
+  Precision: 0.8265
+  Recall:    0.8497
+  F1-Score:  0.8341
+
+_________________________________________________
+Árvore de Decisão — Resultados completos:
+   - Config 1 (Gini, sem poda): Acc 97,88% | F1 97,90%
+   - Config 2 (Entropy, max_depth=5): Acc 84,97% | F1 83,41%
+   → A poda reduziu desempenho mas o modelo fica mais simples e generalizável.
+_________________________________________________
+
+----------------------------------------------------
+cALCULANDO NAIVE BAYES
+
+como minha base é 100% categórica, então vou usar CategoricalNB
+(o Murilo usa GaussianNB porque a dele tem números)
+
+┌────────┬───────────┬──────────────────────────────┐
+│ Config │ Parâmetro │         Significado          │
+├────────┼───────────┼──────────────────────────────┤
+│ 1      │ alpha=1.0 │ Suavização de Laplace padrão │
+├────────┼───────────┼──────────────────────────────┤
+│ 2      │ alpha=0.5 │ Menos suavização             │
+└────────┴───────────┴──────────────────────────────┘
+
+RESULTADOS:
+Naive Bayes [alpha=1.0]
+  Acurácia:  0.8574
+  Precision: 0.8524
+  Recall:    0.8574
+  F1-Score:  0.8500
+
+Naive Bayes [alpha=0.5]
+  Acurácia:  0.8536
+  Precision: 0.8495
+  Recall:    0.8536
+  F1-Score:  0.8467
+
+-------------------------------------------------------------
+CALCULANDO RANDOM FOREST
+
+"em vez de uma árvore de decisão, você planta várias. Cada árvore vê uma parte aleatória dos dados e vota. A classe mais votada ganha."
+
+┌────────┬──────────────────────────────────┬───────────────────────┐
+│ Config │            Parâmetros            │      Significado      │
+├────────┼──────────────────────────────────┼───────────────────────┤
+│ 1      │ n_estimators=100, max_depth=None │ 100 árvores, sem poda │
+├────────┼──────────────────────────────────┼───────────────────────┤
+│ 2      │ n_estimators=200, max_depth=10   │ 200 árvores, podadas  │
+└────────┴──────────────────────────────────┴───────────────────────┘
+
+RESULTADOS:
+Random Fprest [100 arvores sem poda]
+  Acurácia:  0.9653
+  Precision: 0.9656
+  Recall:    0.9653
+  F1-Score:  0.9654
+
+Random Forest [200 arvores com poda]
+  Acurácia:  0.9615
+  Precision: 0.9614
+  Recall:    0.9615
+  F1-Score:  0.9613 
+
+Enquanto uma árvore sozinha pode "decorar" os dados (overfitting), 100 árvores cada uma vendo pedaços diferentes dos dados se corrigem mutuamente. É tipo fazer uma prova com 100 alunos e pegar a resposta mais votada: mesmo que alguns errem feio, a maioria prevalece.
+
+-----------------------------------------------------
+ANALISE DO MELHOR ALGORÍTMO
+
+┌───────────────────┬──────────┬────────┐
+│     Algoritmo     │ Acurácia │   F1   │
+├───────────────────┼──────────┼────────┤
+│ Árvore s/ poda    │  97,88%  │ 97,90% │
+├───────────────────┼──────────┼────────┤
+│ Random Forest 100 │  96,53%  │ 96,54% │
+└───────────────────┴──────────┴────────┘
+
+A Árvore sem poda é a campeã absoluta em números. Mas tem um ponto muito mais importante que acurácia pura:
+
+▎ "Random Forest teve os valores bem próximos uns dos outros em toda a avaliação"
+
+┌───────────────────┬──────────────────────────────────────┐
+│     Algoritmo     │     Variação entre as 4 métricas     │
+├───────────────────┼──────────────────────────────────────┤
+│ Random Forest 100 │ 96,53% a 96,56% (diferença de 0,03%) │
+├───────────────────┼──────────────────────────────────────┤
+│ Árvore s/ poda    │ 97,88% a 97,98% (diferença de 0,10%) │
+└───────────────────┴──────────────────────────────────────┘
+
+E olha a diferença entre as duas configurações:
+
+┌───────────────┬─────────────────────┬───────────┐
+│   Algoritmo   │ Config 1 → Config 2 │   Queda   │
+├───────────────┼─────────────────────┼───────────┤
+│ Árvore        │ 97,88% → 84,97%     │  -13%     │
+├───────────────┼─────────────────────┼───────────┤
+│ Random Forest │ 96,53% → 96,15%     │ -0,38%    │
+└───────────────┴─────────────────────┴───────────┘
+
+A Árvore é uma "estrela instável": brilha muito sem poda, mas despenca com poda. A Random Forest é robusta: muda o parâmetro e ela continua entregando ~96%.
+
+
+
