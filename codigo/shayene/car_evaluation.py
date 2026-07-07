@@ -109,8 +109,8 @@ def avaliar(modelo, X_test, y_test, nome, params):
             'Acurácia': acc, 'F1': f1, 'Precision': prec, 'Recall': rec}
 
 #avaliar os dois modelos que ja treinamos
-avaliar(modelo, X_test, y_test, 'Arvore de Decisao', 'Gini, sem poda')
-avaliar(modelo2, X_test, y_test, 'Árvore de Decisão', 'Entropy, max_depth=5')
+# avaliar(modelo, X_test, y_test, 'Arvore de Decisao', 'Gini, sem poda')
+# avaliar(modelo2, X_test, y_test, 'Árvore de Decisão', 'Entropy, max_depth=5')
 
 
 
@@ -121,12 +121,12 @@ from sklearn.naive_bayes import CategoricalNB
 # config 1: alpha 1.0 (padrao)
 nb1 = CategoricalNB(alpha=1.0)
 nb1.fit(X_train, y_train)
-avaliar(nb1, X_test, y_test, 'Naive Bayes', 'alpha=1.0')
+# avaliar(nb1, X_test, y_test, 'Naive Bayes', 'alpha=1.0')
 
 # conif 2: alpha = 0.5
 nb2 = CategoricalNB(alpha=0.5)
 nb2.fit(X_train, y_train)
-avaliar(nb2, X_test, y_test, 'Naive Bayes', 'alpha=0.5')
+# avaliar(nb2, X_test, y_test, 'Naive Bayes', 'alpha=0.5')
 
 
 
@@ -136,9 +136,58 @@ from sklearn.ensemble import RandomForestClassifier
 #config 1: 100 arvores sem poda
 rf1 = RandomForestClassifier(n_estimators=100, max_depth=None, random_state=42)
 rf1.fit(X_train, y_train)
-avaliar(rf1, X_test, y_test, 'Random Fprest', '100 arvores sem poda')
+# avaliar(rf1, X_test, y_test, 'Random Forest', '100 arvores sem poda')
 
 # config 2: 200 arvores com poda
 rf2 = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42)
 rf2.fit(X_train, y_train)
-avaliar(rf2, X_test, y_test, 'Random Forest', '200 arvores com poda')
+# avaliar(rf2, X_test, y_test, 'Random Forest', '200 arvores com poda')
+
+
+
+# ============================================================
+# AVALIAÇÃO FINAL (métricas + matrizes + tabela)
+# ============================================================
+from sklearn.metrics import confusion_matrix
+
+# Lista com todos os modelos
+modelos = [
+    ('Árvore de Decisão', 'Gini, sem poda', modelo, 'matriz_dt_gini'),
+    ('Árvore de Decisão', 'Entropy, max_depth=5', modelo2, 'matriz_dt_entropy'),
+    ('Naive Bayes', 'alpha=1.0', nb1, 'matriz_nb_1.0'),
+    ('Naive Bayes', 'alpha=0.5', nb2, 'matriz_nb_0.5'),
+    ('Random Forest', '100 árvores, sem poda', rf1, 'matriz_rf_100'),
+    ('Random Forest', '200 árvores, max_depth=10', rf2, 'matriz_rf_200'),
+]
+
+resultados = []
+
+for nome, params, mod, arquivo in modelos:
+    # Métricas
+    res = avaliar(mod, X_test, y_test, nome, params)
+    resultados.append(res)
+
+    # Matriz de confusão
+    y_pred = mod.predict(X_test)
+    cm = confusion_matrix(y_test, y_pred)
+
+    plt.figure(figsize=(6, 5))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.title(f'Matriz de Confusão — {nome}\n{params}')
+    plt.xlabel('Predito')
+    plt.ylabel('Real')
+    plt.savefig(f'resultados/shayene/figuras/{arquivo}.png', dpi=150)
+    print(f'[OK] {arquivo}.png')
+    print()
+
+# Salvar tabela CSV
+tabela = pd.DataFrame(resultados)
+tabela.to_csv('resultados/shayene/tabela_resultados.csv', index=False)
+print('=' * 60)
+print('TABELA FINAL DE RESULTADOS')
+print('=' * 60)
+print(tabela.to_string(index=False))
+print()
+print('Tabela salva em: resultados/shayene/tabela_resultados.csv')
+print('Todas as 6 matrizes de confusão geradas em: resultados/shayene/figuras/')
+
