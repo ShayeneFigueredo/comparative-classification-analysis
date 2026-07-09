@@ -1,0 +1,7 @@
+Algoritmo,Parametrização,Acurácia,F1-Score,Precision,Recall
+Árvore de Decisão,"Gini, sem poda",0.8655,0.8683,0.879,0.8655
+Árvore de Decisão,"Entropy, max_depth=5",0.8571,0.861,0.8854,0.8571
+Naive Bayes,"GaussianNB, var_smoothing=1e-9",0.8487,0.8477,0.8472,0.8487
+Naive Bayes,"GaussianNB, var_smoothing=1e-7",0.8487,0.8477,0.8472,0.8487
+Random Forest,"100 árvores, sem poda",0.8824,0.8847,0.8953,0.8824
+Random Forest,"200 árvores, max_depth=10",0.8824,0.8847,0.8953,0.8824

@@ -26,6 +26,10 @@ desktop.ini
 # Claude Code
 .claude/
 
+# Arquivos do Office (não são código)
+*.docx
+~$*
+
 # Resultados gerados (opcional — descomente se quiser ignorar)
 # relatorio/*.png
 # relatorio/*.csv

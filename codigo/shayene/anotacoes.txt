@@ -213,5 +213,12 @@ E olha a diferença entre as duas configurações:
 
 A Árvore é uma "estrela instável": brilha muito sem poda, mas despenca com poda. A Random Forest é robusta: muda o parâmetro e ela continua entregando ~96%.
 
+- como faz o treinamento e como classifica o "random forest" (no caso dessa base)
 
+sugestao: ter uma tabela relacionando as duas bases para iintrodução
+
+alg 1   alg 2   alg 3
+__________________________
+
+sempre justificar as escolhas dos tipos de algoritmos que usamos.
 
